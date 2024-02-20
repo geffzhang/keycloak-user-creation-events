@@ -24,6 +24,6 @@ jobs:
           branch: update/keycloak-user-creation-events
           token: ${{ secrets.KEYCLOAK_PUSH_SECRET }}
       - name: Set to auto merge
-        run: gh pr merge update/keycloak-user-creation-events --auto --merge -R misarch/infrastructure-docker
+        run: gh pr merge update/keycloak-user-creation-events --auto --merge -R misarch/keycloak
         env:
           GH_TOKEN: ${{ secrets.KEYCLOAK_PUSH_SECRET }}
