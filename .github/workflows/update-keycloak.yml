@@ -15,7 +15,7 @@ jobs:
           repository: "misarch/keycloak"
       - name: Update submodule
         run: |
-          cd keycloak
+          cd keycloak-user-creation-events
           git checkout ${{ github.sha }}
       - uses: peter-evans/create-pull-request@v5
         with:
