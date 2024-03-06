@@ -6,5 +6,5 @@ RUN mkdir -p /opt/keycloak/providers
 RUN mvn clean compile package
 
 # The "providers" directory is a volume in Kubernetes
-ENTRYPOINT [ "mv" ]
+ENTRYPOINT [ "cp" ]
 CMD [ "/app/target/keycloak-dapr-events.jar" , "/opt/keycloak/providers/keycloak-dapr-events.jar" ]
