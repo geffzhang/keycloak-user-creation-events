@@ -34,4 +34,5 @@ Copy the JAR file to your Keycloak server's `providers/` directory.
 4. Find the `keycloak-dapr-events` listener in the "Available" list and select it.
 
 [keycloak-providers](https://github.com/ObaidDev/keycloak-providers)
+
 [mcp-keycloak](https://github.com/akoserwal/keycloak-integrations/tree/main/mcp-keycloak)
