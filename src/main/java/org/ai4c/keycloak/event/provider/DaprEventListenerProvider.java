@@ -1,4 +1,4 @@
-package org.misarch.keycloak.event.provider;
+package org.ai4c.keycloak.event.provider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -15,12 +15,21 @@ import org.keycloak.events.admin.AdminEvent;
 import org.keycloak.events.admin.OperationType;
 import org.keycloak.events.admin.ResourceType;
 import org.keycloak.models.KeycloakSession;
+import org.keycloak.models.OrganizationModel;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.models.utils.KeycloakModelUtils;
+import org.keycloak.organization.OrganizationProvider;
 
 /**
  * Event listener provider for publishing events to Dapr.
+ */
+/**
+ * DaprEventListenerProvider is a Keycloak event listener provider that publishes user registration events
+ * to Dapr's pub/sub system. It handles both regular events (Event) and admin events (AdminEvent).
+ * 
+ * The provider listens for user registration events and CREATE operations on user resources,
+ * then publishes the user details to a configured Dapr endpoint.
  */
 public class DaprEventListenerProvider implements EventListenerProvider {
 
@@ -86,6 +95,11 @@ public class DaprEventListenerProvider implements EventListenerProvider {
             handleUserRegister(
                     adminEvent.getRealmId(), adminEvent.getResourcePath().substring("users/".length()));
         }
+        if(ResourceType.ORGANIZATION.equals(adminEvent.getResourceType())
+                && OperationType.CREATE.equals(adminEvent.getOperationType())) {
+            handleOrganizationCreate(adminEvent.getRealmId(),adminEvent.getResourcePath().substring("organizations/".length()));
+            log.infof("Organization created: %s", adminEvent.getResourcePath());
+        }
     }
 
     /**
@@ -121,4 +135,39 @@ public class DaprEventListenerProvider implements EventListenerProvider {
             }
         });
     }
+
+    /**
+     * Handles user registration.
+     *
+     * @param realmId id of the realm where the user was registered
+     * @param userId id of the registered user
+     */
+    private void handleOrganizationCreate(final String realmId, final String orgId) {
+        log.infof("Organizations %s in realm %s was registered", orgId, realmId);
+         KeycloakModelUtils.runJobInTransaction(session.getKeycloakSessionFactory(), session -> {
+             final RealmModel realm = session.realms().getRealm(realmId);
+             // --- Use OrganizationProvider directly ---
+             OrganizationProvider orgProvider = session.getProvider(OrganizationProvider.class);
+
+             final OrganizationModel organizationModel = orgProvider.getById(orgId);
+             log.infof( "Registered organization [name=\"%s\", id=\"%s\"]",       organizationModel.getName(), organizationModel.getId());
+             try {
+                    final ObjectMapper objectMapper = new ObjectMapper();
+                  final CreateOrganizationDTO event = new CreateOrganizationDTO(organizationModel.getName(), organizationModel.getId());
+                    final HttpClient httpClient = HttpClient.newHttpClient();
+                    final HttpRequest.BodyPublisher bodyPublisher;
+                    bodyPublisher = HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(event));
+                    final HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:3500/v1.0/publish/pubsub/organization/organization/create"))
+                    .header("Content-Type", "application/json")
+                    .POST(bodyPublisher)
+                    .build();
+                 httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                 } catch (IOException | InterruptedException e) {
+                   log.error("Failed sending dapr request", e);
+                   throw new RuntimeException(e);
+             }
+       });
+   }
+ 
 }

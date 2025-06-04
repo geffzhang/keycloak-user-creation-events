@@ -2,14 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.misarch.keycloak.event.provider</groupId>
+    <groupId>org.ai4c.keycloak.event.provider</groupId>
     <artifactId>keycloak-dapr-events</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>Keycloak: Publish user events</name>
     <properties>
-        <keycloak.version>23.0.6</keycloak.version>
+        <keycloak.version>26.2.1</keycloak.version>
     </properties>
 
     <dependencies>

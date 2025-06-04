@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: "misarch/keycloak"
+          repository: "ai4c-ai/keycloak"
           submodules: true
       - name: Update submodule
         run: |
@@ -24,6 +24,6 @@ jobs:
           branch: update/keycloak-user-creation-events
           token: ${{ secrets.KEYCLOAK_PUSH_SECRET }}
       - name: Set to auto merge
-        run: gh pr merge update/keycloak-user-creation-events --auto --merge -R misarch/keycloak
+        run: gh pr merge update/keycloak-user-creation-events --auto --merge -R ai4c-ai/keycloak
         env:
           GH_TOKEN: ${{ secrets.KEYCLOAK_PUSH_SECRET }}

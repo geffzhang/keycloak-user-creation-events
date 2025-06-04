@@ -1,4 +1,4 @@
-package org.misarch.keycloak.event.provider;
+package org.ai4c.keycloak.event.provider;
 
 /**
  * Event for creating a user.
