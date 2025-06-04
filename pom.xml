@@ -7,9 +7,23 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Keycloak: Publish user events</name>
+    <name>Keycloak: Publish user/organization events</name>
+     <description>A Keycloak Event Listener SPI with Dapr.</description>
     <properties>
         <keycloak.version>26.2.1</keycloak.version>
+          <!-- Set your desired Java version (Keycloak 26 runs on 17, but SPIs often compile with 11) -->
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+
+        <!-- Standard Maven properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- Maven plugin versions (use reasonably recent versions) -->
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+        <jboss-logging.version>3.5.3.Final</jboss-logging.version> <!-- Align with Keycloak's BOM or use a known compatible version -->
+
     </properties>
 
     <dependencies>
