@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>Keycloak: Publish user/organization events</name>
-     <description>A Keycloak Event Listener SPI with Dapr.</description>
+    <description>A Keycloak Event Listener SPI with Dapr.</description>
     <properties>
         <keycloak.version>26.2.1</keycloak.version>
           <!-- Set your desired Java version (Keycloak 26 runs on 17, but SPIs often compile with 11) -->
