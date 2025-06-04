@@ -24,6 +24,8 @@ docker rm keycloak-dapr-events
 
 Copy the JAR file to your Keycloak server's `providers/` directory.
 
+[keycloak-providers](https://github.com/ObaidDev/keycloak-providers)
+
 
 
 ## Configuration
