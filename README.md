@@ -24,8 +24,6 @@ docker rm keycloak-dapr-events
 
 Copy the JAR file to your Keycloak server's `providers/` directory.
 
-[keycloak-providers](https://github.com/ObaidDev/keycloak-providers)
-
 
 
 ## Configuration
@@ -34,3 +32,6 @@ Copy the JAR file to your Keycloak server's `providers/` directory.
 2. Select the Realm where you want to configure the SPI.
 3. Navigate to **Realm Settings** > **Events** > **Event Listeners**.
 4. Find the `keycloak-dapr-events` listener in the "Available" list and select it.
+
+[keycloak-providers](https://github.com/ObaidDev/keycloak-providers)
+[mcp-keycloak](https://github.com/akoserwal/keycloak-integrations/tree/main/mcp-keycloak)
