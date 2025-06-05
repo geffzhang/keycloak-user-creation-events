@@ -55,8 +55,8 @@ public class DaprEventListenerProvider implements EventListenerProvider {
      * @param session Keycloak session
      */
     public DaprEventListenerProvider(KeycloakSession session) {
-        session.getTransactionManager().enlistAfterCompletion(tx);
         this.session = session;
+        session.getTransactionManager().enlistAfterCompletion(tx);
     }
 
     @Override
@@ -90,11 +90,18 @@ public class DaprEventListenerProvider implements EventListenerProvider {
      * @param includeRepresentation when false, event listener should NOT include representation field in the resulting action
      */
     private void publishAdminEvent(final AdminEvent adminEvent, final boolean includeRepresentation) {
+        if (adminEvent.getRealmId() == null) {
+              log.errorf("AdminEvent missing realm ID: {%s}", adminEvent.getResourceType());
+              return;
+        }
+        /* 
         if (ResourceType.USER.equals(adminEvent.getResourceType())
                 && OperationType.CREATE.equals(adminEvent.getOperationType())) {
             handleUserRegister(
                     adminEvent.getRealmId(), adminEvent.getResourcePath().substring("users/".length()));
         }
+         */
+
         if(ResourceType.ORGANIZATION.equals(adminEvent.getResourceType())
                 && OperationType.CREATE.equals(adminEvent.getOperationType())) {
             handleOrganizationCreate(adminEvent.getRealmId(),adminEvent.getResourcePath().substring("organizations/".length()));
@@ -112,6 +119,7 @@ public class DaprEventListenerProvider implements EventListenerProvider {
         log.infof("User %s in realm %s was registered", userId, realmId);
         KeycloakModelUtils.runJobInTransaction(session.getKeycloakSessionFactory(), session -> {
             final RealmModel realm = session.realms().getRealm(realmId);
+            session.getContext().setRealm(realm);
             final UserModel user = session.users().getUserById(realm, userId);
             log.infof(
                     "Registered user [name=\"%s\", email=\"%s\", first name=\"%s\", last name=\"%s\"]",
@@ -145,8 +153,9 @@ public class DaprEventListenerProvider implements EventListenerProvider {
     private void handleOrganizationCreate(final String realmId, final String orgId) {
         log.infof("Organizations %s in realm %s was registered", orgId, realmId);
          KeycloakModelUtils.runJobInTransaction(session.getKeycloakSessionFactory(), session -> {
-             final RealmModel realm = session.realms().getRealm(realmId);
-             // --- Use OrganizationProvider directly ---
+              final RealmModel realm = session.realms().getRealm(realmId);
+              session.getContext().setRealm(realm);
+             // --- Use OrganizationProvider to get organization details --- 
              OrganizationProvider orgProvider = session.getProvider(OrganizationProvider.class);
 
              final OrganizationModel organizationModel = orgProvider.getById(orgId);
